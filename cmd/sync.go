@@ -7,7 +7,7 @@ import (
 	"time"
 	"path/filepath"
 
-	"carmack/utils"
+	"github.com/pranshuj73/carmack/utils"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"

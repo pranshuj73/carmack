@@ -13,15 +13,11 @@ func EnsureDirectoryExists(dir string) error {
 	return nil
 }
 
-func OpenFileWithEditor(editor, filename string) error {
+func OpenFileWithEditor(editor string, filename string, date string) error {
 	// Check if the file already exists
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		// File does not exist, create and write default content
-		defaultContent := `todo
-+ 
-
-done
-+ `
+    defaultContent := fmt.Sprintf("> %s.plan\n\n`accomplished:`\n+ \n\n`todo`\n+ \n\n`pending:`\n+ ", date)
 		err := os.WriteFile(filename, []byte(defaultContent), 0644)
 		if err != nil {
 			return fmt.Errorf("error creating file: %w", err)

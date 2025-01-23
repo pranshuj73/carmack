@@ -7,7 +7,7 @@ import (
 	"time"
 	"strings"
 
-	"carmack/utils"
+	"github.com/pranshuj73/carmack/utils"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -133,7 +133,7 @@ func handlePlanFile(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	err = utils.OpenFileWithEditor(editor, filename)
+	err = utils.OpenFileWithEditor(editor, filename, date)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		os.Exit(1)

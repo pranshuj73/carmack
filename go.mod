@@ -1,4 +1,4 @@
-module carmack
+module github.com/pranshuj73/carmack
 
 go 1.23.2
 

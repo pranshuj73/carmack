@@ -1,7 +1,7 @@
 package main
 
 import (
-	"carmack/cmd"
+	"github.com/pranshuj73/carmack/cmd"
 )
 
 
