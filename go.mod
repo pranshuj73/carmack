@@ -1,6 +1,6 @@
 module github.com/pranshuj73/carmack
 
-go 1.23.2
+go 1.23.5
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0

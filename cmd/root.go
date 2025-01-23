@@ -39,7 +39,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.carmack.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.carmack.yaml)")
 	rootCmd.PersistentFlags().StringVar(&directory, "directory", "", "Set the directory for storing plan files.")
 	rootCmd.PersistentFlags().StringVar(&editor, "editor", "nvim", "Set the editor for opening plan files.")
 
@@ -62,7 +62,7 @@ func initConfig() {
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".carmack")
 		viper.SetConfigType("yaml")
-		cfgFile = filepath.Join(home, ".carmack.yaml")
+		cfgFile = filepath.Join(home, ".config", ".carmack.yaml")
 	}
 
 	// Read in existing config file or create a new one
