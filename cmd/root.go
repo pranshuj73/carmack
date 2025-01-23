@@ -97,7 +97,11 @@ func handlePlanFile(cmd *cobra.Command, args []string) {
 	// Retrieve directory from config
 	dir = viper.GetString("directory")
 	if dir == "" {
-		fmt.Println("Error: Please setup the directory you'd like to use with `carmack --directory <path>`.")
+    fmt.Println("Error: Please enter the directory you'd like to use with carmack:")
+    fmt.Scanln(&dir)
+    viper.Set("directory", dir)
+    saveConfig()
+    fmt.Printf("Directory set to: %s\n", dir)
 		os.Exit(1)
 	}
 
