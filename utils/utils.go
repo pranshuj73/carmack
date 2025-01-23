@@ -17,11 +17,11 @@ func OpenFileWithEditor(editor, filename string) error {
 	// Check if the file already exists
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		// File does not exist, create and write default content
-		defaultContent := `*
+		defaultContent := `todo
++ 
 
-+
-
-- `
+done
++ `
 		err := os.WriteFile(filename, []byte(defaultContent), 0644)
 		if err != nil {
 			return fmt.Errorf("error creating file: %w", err)
