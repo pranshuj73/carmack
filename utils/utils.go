@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"sort"
+	"strings"
 )
 
 func EnsureDirectoryExists(dir string) error {
@@ -13,12 +16,68 @@ func EnsureDirectoryExists(dir string) error {
 	return nil
 }
 
-func OpenFileWithEditor(editor string, filename string, date string) error {
+func getLastPlanFile(dir string) (string, error) {
+	files, err := filepath.Glob(filepath.Join(dir, "*.md"))
+	if err != nil {
+		return "", err
+	}
+
+	if len(files) == 0 {
+		return "", fmt.Errorf("no plan files found")
+	}
+
+	// Sort files by name (which are in ddmmyyyy.md format)
+	sort.Strings(files)
+	// The last file in the sorted list is the latest one
+	return files[len(files)-1], nil
+}
+
+func extractTodoAndIdeas(content string) (string, string) {
+	todoSection := ""
+	ideasSection := ""
+
+	lines := strings.Split(content, "\n")
+	for i := 0; i < len(lines); i++ {
+		if strings.HasPrefix(lines[i], "`todo`") {
+			for j := i + 1; j < len(lines); j++ {
+				if strings.HasPrefix(lines[j], "`ideas:`") {
+					break
+				}
+				todoSection += lines[j] + "\n"
+			}
+		}
+		if strings.HasPrefix(lines[i], "`ideas:`") {
+			for j := i + 1; j < len(lines); j++ {
+				if strings.HasPrefix(lines[j], "`") {
+					break
+				}
+				ideasSection += lines[j] + "\n"
+			}
+		}
+	}
+
+	return todoSection, ideasSection
+}
+
+func OpenFileWithEditor(editor string, filename string, date string, carryOver bool) error {
 	// Check if the file already exists
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		// File does not exist, create and write default content
-    defaultContent := fmt.Sprintf("> %s.plan\n\n`accomplished:`\n+ \n\n`todo`\n+ \n\n`ideas:`\n+ ", date)
-		err := os.WriteFile(filename, []byte(defaultContent), 0644)
+		defaultContent := fmt.Sprintf("> %s.plan\n\n`accomplished:`\n+ \n\n`todo`\n+ \n\n`ideas:`\n+ ", date)
+
+		// Get the last plan file
+    if carryOver {
+      lastPlanFile, err := getLastPlanFile(filepath.Dir(filename))
+      if err == nil {
+        content, err := os.ReadFile(lastPlanFile)
+        if err == nil {
+          todo, ideas := extractTodoAndIdeas(string(content))
+          defaultContent = fmt.Sprintf("> %s.plan\n\n`accomplished:`\n+ \n\n`todo`\n%s\n`ideas:`\n%s", date, todo, ideas)
+        }
+      }
+    }
+
+		err = os.WriteFile(filename, []byte(defaultContent), 0644)
 		if err != nil {
 			return fmt.Errorf("error creating file: %w", err)
 		}

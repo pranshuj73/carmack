@@ -18,6 +18,7 @@ var (
 	cfgFile   string
 	directory string
 	editor    string
+  carryOver bool
 )
 
 var rootCmd = &cobra.Command{
@@ -41,12 +42,14 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/.carmack.yaml)")
 	rootCmd.PersistentFlags().StringVar(&directory, "directory", "", "Set the directory for storing plan files.")
+  rootCmd.PersistentFlags().BoolVar(&carryOver, "carryOver", true, "Carry over the todo and ideas from the last plan file. [default: true]")
 	rootCmd.PersistentFlags().StringVar(&editor, "editor", "nvim", "Set the editor for opening plan files.")
 
 	viper.BindPFlag("directory", rootCmd.PersistentFlags().Lookup("directory"))
 	viper.BindPFlag("editor", rootCmd.PersistentFlags().Lookup("editor"))
 
 	viper.SetDefault("editor", "nvim")
+  viper.SetDefault("carryOver", true)
 }
 
 func initConfig() {
@@ -106,6 +109,7 @@ func handlePlanFile(cmd *cobra.Command, args []string) {
 	}
 
 	editor := viper.GetString("editor")
+  carryOver := viper.GetBool("carryOver")
 
 	// Determine the date based on the input argument
 	var date string
@@ -143,7 +147,7 @@ func handlePlanFile(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	err = utils.OpenFileWithEditor(editor, filename, date)
+	err = utils.OpenFileWithEditor(editor, filename, date, carryOver)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		os.Exit(1)
