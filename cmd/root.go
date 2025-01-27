@@ -117,6 +117,12 @@ func handlePlanFile(cmd *cobra.Command, args []string) {
 		case "yesterday":
 			date = now.AddDate(0, 0, -1).Format("02012006")
 		default:
+      // check if args[0] is a valid date
+      _, err := time.Parse("02012006", args[0])
+      if err != nil {
+        fmt.Println("Error: Please enter a valid date in the format DDMMYYYY.")
+        os.Exit(1)
+      }
 			date = args[0] // Assume the argument is already a valid date
 		}
 	} else {
