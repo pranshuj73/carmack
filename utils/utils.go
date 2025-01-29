@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+  homedir "github.com/mitchellh/go-homedir"
 )
 
 func EnsureDirectoryExists(dir string) error {
@@ -91,3 +92,17 @@ func OpenFileWithEditor(editor string, filename string, date string, carryOver b
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
+
+func DisplayFileContents(filename string) error {
+  expandedFilename, err := homedir.Expand(filename)
+  if _, err := os.Stat(expandedFilename); os.IsNotExist(err) {
+    return fmt.Errorf("file does not exist")
+  }
+  content, err := os.ReadFile(expandedFilename)
+  if err != nil {
+    return err
+  }
+  fmt.Println(string(content))
+  return nil
+}
+

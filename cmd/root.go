@@ -120,6 +120,13 @@ func handlePlanFile(cmd *cobra.Command, args []string) {
 			date = now.Format("02012006")
 		case "yesterday":
 			date = now.AddDate(0, 0, -1).Format("02012006")
+    case "display", "cat":
+      filename := filepath.Join(dir, fmt.Sprintf("%s.md", now.Format("02012006")))
+      err := utils.DisplayFileContents(filename)
+      if err != nil {
+        fmt.Println("Error displaying file contents:", err)
+      }
+      return
 		default:
       // check if args[0] is a valid date
       _, err := time.Parse("02012006", args[0])
