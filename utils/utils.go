@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sort"
+  "time"
 	"strings"
   homedir "github.com/mitchellh/go-homedir"
 )
@@ -18,19 +18,16 @@ func EnsureDirectoryExists(dir string) error {
 }
 
 func getLastPlanFile(dir string) (string, error) {
-	files, err := filepath.Glob(filepath.Join(dir, "*.md"))
-	if err != nil {
-		return "", err
+	today := time.Now()
+	for i := 0; i < 7; i++ {
+		date := today.AddDate(0, 0, -i)
+		filename := fmt.Sprintf("%s.md", date.Format("02012006"))
+		filePath := filepath.Join(dir, filename)
+		if _, err := os.Stat(filePath); err == nil {
+			return filePath, nil
+		}
 	}
-
-	if len(files) == 0 {
-		return "", fmt.Errorf("no plan files found")
-	}
-
-	// Sort files by name (which are in ddmmyyyy.md format)
-	sort.Strings(files)
-	// The last file in the sorted list is the latest one
-	return files[len(files)-1], nil
+	return "", fmt.Errorf("no plan files found in the last 7 days")
 }
 
 func extractTodoAndIdeas(content string) (string, string) {
